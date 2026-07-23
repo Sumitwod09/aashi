@@ -23,8 +23,9 @@ export default function Home() {
   const [streak] = useState(3);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Full API Endpoint URL or SheetDB API ID fallback
+  // Stein HQ API Endpoint URL or SheetDB fallback
   const apiEndpoint =
+    process.env.NEXT_PUBLIC_STEINHQ_API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     (process.env.NEXT_PUBLIC_SHEETDB_API_ID
       ? `https://sheetdb.io/api/v1/${process.env.NEXT_PUBLIC_SHEETDB_API_ID}`
@@ -122,14 +123,14 @@ export default function Home() {
     setDirection(1);
   };
 
-  // Asynchronous fetch to API Endpoint URL on final card click
+  // Asynchronous fetch to Stein HQ / SheetDB API Endpoint URL on final card click
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     playSound('click', soundEnabled);
 
     try {
-      // Build payload object: { created_at: "ISO_STRING", q1: "...", q2: "..." }
+      // Build row object: { created_at: "ISO_STRING", total_xp: "...", q1: "...", q2: "..." }
       const rowData: Record<string, string> = {
         created_at: new Date().toISOString(),
         total_xp: `${xp} XP`,
@@ -153,35 +154,35 @@ export default function Home() {
         rowData[`q${q.id}`] = displayAnswer || "N/A";
       });
 
+      // Stein HQ format expects array `[ rowData ]`, while SheetDB accepts `{ data: [ rowData ] }`
+      const isSteinHq = apiEndpoint.includes("steinhq.com");
+      const requestBody = isSteinHq ? JSON.stringify([rowData]) : JSON.stringify({ data: [rowData] });
+
       const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          data: [rowData],
-        }),
+        body: requestBody,
       });
 
       let data: Record<string, unknown> = {};
       try {
         data = await response.json();
       } catch {
-        // Handle non-JSON or plain OK responses
+        // Handle plain OK responses
       }
 
-      if (response.ok || data?.created || data?.success) {
+      if (response.ok || data?.created || data?.success || data?.totalUpdatedRows) {
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       } else {
         console.warn("API response warning:", data);
-        // Fallback grace to victory view
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       }
     } catch (error) {
       console.error("API connection error:", error);
-      // Graceful fallback to completion screen
       setIsSubmitted(true);
       playSound('success', soundEnabled);
     } finally {
@@ -236,7 +237,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full text-center py-3 text-xs text-slate-400 font-mono">
-        <span>PulseQuest Interactive Game • Next.js</span>
+        <span>PulseQuest Interactive Game • Next.js & Stein HQ</span>
       </footer>
     </main>
   );
