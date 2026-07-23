@@ -65,7 +65,7 @@ export function CelebrationScreen({
       className="relative z-20 w-full max-w-md mx-auto my-auto px-4 py-2"
     >
       <div className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-pink-200 text-center space-y-6 bg-gradient-to-b from-white/95 via-pink-50/30 to-white/95">
-        {/* Animated Heart/Trophy Icon & Glow */}
+        {/* Animated Heart Icon */}
         <div className="relative inline-block">
           <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-pink-400 via-rose-500 to-indigo-500 opacity-40 blur-lg animate-pulse" />
           <motion.div
@@ -82,20 +82,20 @@ export function CelebrationScreen({
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 font-bold text-xs border border-pink-200">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>Submission Received!</span>
+            <span>Quest Victory Unlocked!</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Level Complete! 🎉
           </h1>
           <p className="text-xs text-slate-500 font-medium max-w-xs mx-auto">
-            Your responses have been successfully submitted via Web3Forms API.
+            Your vibe check answers have been saved to the SheetDB Vibe Vault.
           </p>
         </div>
 
         {/* Final "Do you like me?" Result Banner */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-indigo-600 text-white shadow-lg space-y-1">
           <div className="text-[11px] font-mono uppercase tracking-wider text-pink-100">
-            Final Question Answered 💌
+            Final Card Unlocked 💌
           </div>
           <div className="text-lg font-bold">
             "Do you like me?" → <span className="underline decoration-wavy underline-offset-4">{finalAnswer}</span>
@@ -124,10 +124,10 @@ export function CelebrationScreen({
         {/* Answer Summary Card */}
         <div className="text-left space-y-3 pt-1">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-400 uppercase">
-            <span>Response Summary</span>
+            <span>Quest Summary</span>
             <span className="flex items-center gap-1 text-indigo-600">
               <Sparkles className="w-3 h-3" />
-              {QUESTIONS.length} Answered
+              {QUESTIONS.length} Cards Cleared
             </span>
           </div>
 
@@ -172,12 +172,12 @@ export function CelebrationScreen({
             className="w-full py-3.5 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-slate-900/10 transition-all"
           >
             <RotateCcw className="w-4 h-4" />
-            <span>Retake Survey</span>
+            <span>Play Again 🔄</span>
           </motion.button>
         </div>
 
         <p className="text-[11px] text-slate-400 flex items-center justify-center gap-1">
-          Made with <Heart className="w-3 h-3 fill-rose-500 text-rose-500" /> Next.js & Web3Forms
+          Made with <Heart className="w-3 h-3 fill-rose-500 text-rose-500" /> Next.js & SheetDB
         </p>
       </div>
     </motion.div>

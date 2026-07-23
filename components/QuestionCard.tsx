@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Check, ArrowLeft, ArrowRight, Sparkles, Send, Loader2, Heart, CheckSquare, Square } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, Sparkles, Send, Loader2, Heart } from "lucide-react";
 import { Question } from "@/data/questions";
 import { ProgressBar } from "./ProgressBar";
 
@@ -9,7 +9,7 @@ interface QuestionCardProps {
   question: Question;
   currentIndex: number;
   totalQuestions: number;
-  selectedAnswer: string; // JSON array string for multi-choice, or text string
+  selectedAnswer: string;
   onToggleMultiOption: (optionLabel: string) => void;
   onSelectSingleOption: (optionLabel: string) => void;
   onTextChange: (text: string) => void;
@@ -122,7 +122,7 @@ export function QuestionCard({
             </h2>
             <p className="text-xs text-slate-400 font-mono flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-400" />
-              <span>Earn +{question.xpPoints} XP on completion</span>
+              <span>Unlock +{question.xpPoints} XP on card completion</span>
             </p>
           </div>
 
@@ -250,7 +250,7 @@ export function QuestionCard({
               </div>
             )}
 
-            {/* SHORT TEXT ONE-LINE INPUT */}
+            {/* SHORT TEXT INPUT */}
             {question.type === "short-text" && (
               <div className="space-y-2 py-2">
                 <div className="relative">
@@ -266,7 +266,7 @@ export function QuestionCard({
                   </div>
                 </div>
                 <p className="text-[11px] text-slate-400 font-mono">
-                  💡 Type your answer in a single line and hit Next!
+                  💡 Type your response in one line and tap Next!
                 </p>
               </div>
             )}
@@ -291,7 +291,7 @@ export function QuestionCard({
           </div>
         </div>
 
-        {/* Card Footer Navigation Buttons */}
+        {/* Card Footer Controls */}
         <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3 mt-4">
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -321,11 +321,11 @@ export function QuestionCard({
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Sending Love...</span>
+                  <span>Saving Quest...</span>
                 </>
               ) : (
                 <>
-                  <span>Submit Final Answer</span>
+                  <span>Complete Quest</span>
                   <Heart className="w-4 h-4 fill-white" />
                 </>
               )}
@@ -341,7 +341,7 @@ export function QuestionCard({
                   : "bg-slate-300 cursor-not-allowed shadow-none"
               }`}
             >
-              <span>Next</span>
+              <span>Next Level</span>
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           )}

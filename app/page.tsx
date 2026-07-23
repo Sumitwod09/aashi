@@ -7,7 +7,7 @@ import { QuestionCard } from "@/components/QuestionCard";
 import { CelebrationScreen } from "@/components/CelebrationScreen";
 import { QUESTIONS } from "@/data/questions";
 
-// Web Audio API Sound Synthesizer (Zero external dependencies)
+// Web Audio API Sound Synthesizer
 function playSound(type: 'click' | 'next' | 'success', soundEnabled: boolean) {
   if (!soundEnabled || typeof window === 'undefined') return;
 
@@ -56,7 +56,7 @@ function playSound(type: 'click' | 'next' | 'success', soundEnabled: boolean) {
       });
     }
   } catch {
-    // Ignore audio autoplay policies
+    // Ignore audio autoplay restrictions
   }
 }
 
@@ -70,15 +70,15 @@ export default function Home() {
   const [streak] = useState(3);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Access key with fallback
-  const accessKey =
-    process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
-    "0f82e5b7-789a-4f51-b0db-553b6f2f3f72";
+  // SheetDB API ID fallback
+  const sheetDbId =
+    process.env.NEXT_PUBLIC_SHEETDB_API_ID ||
+    "58f07ea4d42e0"; // Fallback SheetDB API ID
 
   const currentQuestion = QUESTIONS[currentIndex];
   const currentRawAnswer = userAnswers[currentQuestion.id] || "";
 
-  // Helper to re-calculate XP
+  // Calculate XP total
   const recalculateXp = (updated: Record<number, string>) => {
     let totalXp = 0;
     QUESTIONS.forEach((q) => {
@@ -101,7 +101,7 @@ export default function Home() {
     setXp(totalXp);
   };
 
-  // Toggle multi-select checkbox option
+  // Checkbox option toggle
   const handleToggleMultiOption = (optionLabel: string) => {
     playSound('click', soundEnabled);
     let currentArray: string[] = [];
@@ -126,7 +126,7 @@ export default function Home() {
     recalculateXp(updated);
   };
 
-  // Single select radio option
+  // Radio option select
   const handleSelectSingleOption = (optionLabel: string) => {
     playSound('click', soundEnabled);
     const updated = { ...userAnswers, [currentQuestion.id]: optionLabel };
@@ -134,7 +134,7 @@ export default function Home() {
     recalculateXp(updated);
   };
 
-  // Short/Long Text change
+  // Text change
   const handleTextChange = (text: string) => {
     const updated = { ...userAnswers, [currentQuestion.id]: text };
     setUserAnswers(updated);
@@ -167,18 +167,19 @@ export default function Home() {
     setDirection(1);
   };
 
+  // Asynchronous fetch to SheetDB API on final question click
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     playSound('click', soundEnabled);
 
     try {
-      const formData = new FormData();
-      formData.append("access_key", accessKey);
-      formData.append("subject", "PulseQuest Survey Response 💌");
-      formData.append("from_name", "PulseQuest App");
+      // Build SheetDB payload object: { created_at: "ISO_STRING", q1: "...", q2: "..." }
+      const sheetRow: Record<string, string> = {
+        created_at: new Date().toISOString(),
+        total_xp: `${xp} XP`,
+      };
 
-      // Format answers nicely for Web3Forms email
       QUESTIONS.forEach((q) => {
         const raw = userAnswers[q.id] || "";
         let displayAnswer = raw;
@@ -194,28 +195,32 @@ export default function Home() {
           }
         }
 
-        formData.append(`${q.subtitle} - ${q.title}`, displayAnswer || "N/A");
+        sheetRow[`q${q.id}`] = displayAnswer || "N/A";
       });
 
-      formData.append("Total_XP_Earned", `${xp} XP`);
-
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch(`https://sheetdb.io/api/v1/${sheetDbId}`, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: [sheetRow],
+        }),
       });
 
       const data = await response.json();
 
-      if (data.success || response.ok) {
+      if (response.ok || data?.created || data?.success) {
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       } else {
-        console.warn("Web3Forms response warning:", data.message);
+        console.warn("SheetDB response warning:", data);
+        // Fallback to success view
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       }
     } catch (error) {
-      console.error("Web3Forms submission error:", error);
+      console.error("SheetDB API connection error:", error);
       setIsSubmitted(true);
       playSound('success', soundEnabled);
     } finally {
@@ -236,9 +241,6 @@ export default function Home() {
 
       {/* Main Card Container */}
       <div className="flex-1 flex flex-col justify-center items-center py-4 w-full">
-        {/* Hidden Input for Web3Forms Access Key */}
-        <input type="hidden" name="access_key" value={accessKey} />
-
         <AnimatePresence mode="wait" custom={direction}>
           {!isSubmitted ? (
             <QuestionCard
@@ -270,7 +272,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full text-center py-3 text-xs text-slate-400 font-mono">
-        <span>PulseQuest Mobile-First Q&A • Powered by Next.js & Web3Forms</span>
+        <span>PulseQuest Interactive Game • Powered by Next.js & SheetDB</span>
       </footer>
     </main>
   );

@@ -27,18 +27,22 @@ export function Header({
 
   return (
     <header className="sticky top-0 z-40 w-full px-4 py-3 max-w-md mx-auto">
-      <div className="glass-panel rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-sm">
+      <div className="glass-panel rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-sm border border-white/80">
         {/* Menu Button */}
         <motion.button
           whileTap={{ scale: 0.92 }}
-          onClick={() => setShowMenu(!showMenu)}
+          onClick={() => {
+            setShowMenu(!showMenu);
+            setShowNotifications(false);
+            setShowChat(false);
+          }}
           className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition-colors relative"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
         </motion.button>
 
-        {/* Brand & Gamification Counter */}
+        {/* Brand & XP Counter */}
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-xs shadow-md shadow-indigo-200">
             <Zap className="w-3.5 h-3.5 fill-amber-300 text-amber-300 animate-pulse" />
@@ -142,13 +146,13 @@ export function Header({
               <div className="p-2.5 rounded-xl bg-indigo-50/80 border border-indigo-100 flex items-start gap-2.5">
                 <Sparkles className="w-4 h-4 text-indigo-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-indigo-900">Welcome to PulseQuest!</p>
-                  <p className="text-slate-500 text-[11px]">Earn +50 XP per question answered. Complete all to unlock your badge.</p>
+                  <p className="font-semibold text-indigo-900">Welcome to PulseQuest! ✨</p>
+                  <p className="text-slate-500 text-[11px]">Earn XP on every card completed. Unlock your badge at the final level.</p>
                 </div>
               </div>
               <div className="p-2 rounded-xl bg-slate-50 border border-slate-100">
                 <p className="font-medium text-slate-700">Daily Streak Active ⚡</p>
-                <p className="text-slate-400 text-[11px]">2-day streak boost applied!</p>
+                <p className="text-slate-400 text-[11px]">3-day streak boost unlocked!</p>
               </div>
             </div>
           </motion.div>
@@ -165,7 +169,7 @@ export function Header({
             <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-3">
               <div className="flex items-center gap-1.5 font-bold text-xs text-slate-800 uppercase tracking-wider">
                 <MessageSquare className="w-3.5 h-3.5 text-pink-500" />
-                <span>Live Pulse Feed</span>
+                <span>Live Vibe Feed</span>
               </div>
               <button
                 onClick={() => setShowChat(false)}
@@ -177,11 +181,11 @@ export function Header({
             <div className="space-y-2 text-xs">
               <div className="p-2 rounded-xl bg-pink-50/80 border border-pink-100">
                 <span className="font-bold text-pink-700">@Alex:</span>
-                <span className="text-slate-600 ml-1">Ramen is definitely the ultimate midnight snack 🍜</span>
+                <span className="text-slate-600 ml-1">Ramen is definitely the ultimate comfort meal! 🍜</span>
               </div>
               <div className="p-2 rounded-xl bg-indigo-50/80 border border-indigo-100">
                 <span className="font-bold text-indigo-700">@Maya:</span>
-                <span className="text-slate-600 ml-1">Teleportation for 24 hours would be insane! 🚀</span>
+                <span className="text-slate-600 ml-1">The final question is so cute! 💖</span>
               </div>
             </div>
           </motion.div>
@@ -212,7 +216,7 @@ export function Header({
                 }}
                 className="w-full text-left px-3 py-2 rounded-xl font-medium text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
               >
-                Restart Survey
+                Restart Game 🔄
               </button>
               <button
                 onClick={() => {
@@ -225,7 +229,7 @@ export function Header({
                 <span className="text-slate-400 font-normal">{soundEnabled ? 'ON' : 'OFF'}</span>
               </button>
               <div className="pt-2 mt-2 border-t border-slate-100 text-[11px] text-slate-400">
-                PulseQuest v1.0 • Web3Forms Powered
+                PulseQuest v2.0 • SheetDB Powered
               </div>
             </div>
           </motion.div>
