@@ -643,7 +643,7 @@ export const QUESTIONS: Question[] = [
       },
       {
         id: "opt-26c",
-        label: "Never in a million years",
+        label: "Since I don't know you, so I can't say right now",
         emoji: "🌟",
         description: "100% wholesome vibes."
       },
@@ -678,9 +678,9 @@ export const QUESTIONS: Question[] = [
       },
       {
         id: "opt-27c",
-        label: "You're growing on me every day",
-        emoji: "🌱",
-        description: "Daily level up!"
+        label: "NO",
+        emoji: "❌",
+        description: "Let just be friends!"
       },
       {
         id: "opt-27d",

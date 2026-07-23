@@ -54,10 +54,10 @@ export function QuestionCard({
   // Variants for slide & fade animations
   const variants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 120 : -120,
+      x: dir > 0 ? 100 : -100,
       opacity: 0,
-      scale: 0.95,
-      rotate: dir > 0 ? 2 : -2,
+      scale: 0.96,
+      rotate: dir > 0 ? 1.5 : -1.5,
     }),
     center: {
       x: 0,
@@ -66,17 +66,17 @@ export function QuestionCard({
       rotate: 0,
       transition: {
         type: "spring" as const,
-        stiffness: 300,
-        damping: 25,
+        stiffness: 320,
+        damping: 26,
       },
     },
     exit: (dir: number) => ({
-      x: dir < 0 ? 120 : -120,
+      x: dir < 0 ? 100 : -100,
       opacity: 0,
-      scale: 0.95,
-      rotate: dir < 0 ? 2 : -2,
+      scale: 0.96,
+      rotate: dir < 0 ? 1.5 : -1.5,
       transition: {
-        duration: 0.2,
+        duration: 0.18,
       },
     }),
   };
@@ -84,10 +84,10 @@ export function QuestionCard({
   const isFinalQuestion = question.title.toLowerCase().includes("like me");
 
   return (
-    <div className="relative w-full max-w-md mx-auto my-auto px-4 py-2">
+    <div className="relative w-full max-w-md mx-auto my-auto px-3 sm:px-4 py-1 sm:py-2">
       {/* Visual Stack Background Cards */}
-      <div className="absolute inset-x-7 top-4 bottom-2 stacked-card-2 rounded-3xl pointer-events-none z-0" />
-      <div className="absolute inset-x-6 top-3 bottom-3 stacked-card-1 rounded-3xl pointer-events-none z-10" />
+      <div className="absolute inset-x-6 sm:inset-x-7 top-4 bottom-2 stacked-card-2 rounded-3xl pointer-events-none z-0" />
+      <div className="absolute inset-x-5 sm:inset-x-6 top-3 bottom-3 stacked-card-1 rounded-3xl pointer-events-none z-10" />
 
       {/* Main Active Card */}
       <motion.div
@@ -97,14 +97,14 @@ export function QuestionCard({
         initial="enter"
         animate="center"
         exit="exit"
-        className={`relative z-20 glass-panel rounded-3xl p-6 sm:p-7 shadow-xl border flex flex-col justify-between min-h-[460px] ${
+        className={`relative z-20 glass-panel rounded-3xl p-5 sm:p-7 shadow-xl border flex flex-col justify-between min-h-[440px] sm:min-h-[470px] ${
           isFinalQuestion
             ? "border-pink-300 shadow-pink-200/50 bg-gradient-to-b from-white/95 via-pink-50/40 to-white/95"
             : "border-white/90 shadow-indigo-100/50"
         }`}
       >
         {/* Header & Progress */}
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           <ProgressBar
             currentIndex={currentIndex}
             totalQuestions={totalQuestions}
@@ -114,23 +114,23 @@ export function QuestionCard({
 
           {/* Question Title */}
           <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight leading-snug flex items-center gap-2">
-              {question.title}
+            <h2 className="text-lg sm:text-2xl font-bold text-slate-800 tracking-tight leading-snug flex items-center gap-1.5 sm:gap-2">
+              <span>{question.title}</span>
               {isFinalQuestion && (
-                <Heart className="w-6 h-6 fill-rose-500 text-rose-500 animate-bounce inline-block" />
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-rose-500 text-rose-500 animate-bounce flex-shrink-0 inline-block" />
               )}
             </h2>
-            <p className="text-xs text-slate-400 font-mono flex items-center gap-1">
+            <p className="text-[11px] sm:text-xs text-slate-400 font-mono flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-400" />
               <span>Unlock +{question.xpPoints} XP on card completion</span>
             </p>
           </div>
 
-          {/* Interactive Question Inputs */}
+          {/* Interactive Inputs Container */}
           <div className="pt-1">
             {/* MULTI-CHOICE CHECKBOXES */}
             {question.type === "multi-choice" && question.options && (
-              <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+              <div className="space-y-2 sm:space-y-2.5 max-h-[46vh] sm:max-h-[260px] overflow-y-auto overscroll-contain pr-1">
                 {question.options.map((option) => {
                   const isChecked = selectedArray.includes(option.label);
 
@@ -140,10 +140,10 @@ export function QuestionCard({
                       whileTap={{ scale: 0.97 }}
                       whileHover={{ scale: 1.01 }}
                       onClick={() => onToggleMultiOption(option.label)}
-                      className={`w-full text-left p-3.5 rounded-2xl transition-all duration-200 flex items-start gap-3 border ${
+                      className={`w-full text-left p-3 sm:p-3.5 rounded-2xl transition-all duration-150 flex items-start gap-2.5 sm:gap-3 border ${
                         isChecked
                           ? "bg-gradient-to-r from-indigo-50 to-pink-50 border-indigo-500 shadow-md ring-2 ring-indigo-500/20"
-                          : "bg-white/80 hover:bg-slate-50 border-slate-200/80"
+                          : "bg-white/85 hover:bg-slate-50 border-slate-200/80"
                       }`}
                     >
                       {/* Checkbox Icon */}
@@ -167,10 +167,10 @@ export function QuestionCard({
 
                       {/* Label & Description */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">{option.emoji}</span>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <span className="text-base leading-none">{option.emoji}</span>
                           <span
-                            className={`font-semibold text-sm ${
+                            className={`font-semibold text-xs sm:text-sm ${
                               isChecked ? "text-indigo-950 font-bold" : "text-slate-700"
                             }`}
                           >
@@ -178,7 +178,7 @@ export function QuestionCard({
                           </span>
                         </div>
                         {option.description && (
-                          <p className="text-xs text-slate-500 mt-0.5 leading-tight">
+                          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-tight">
                             {option.description}
                           </p>
                         )}
@@ -191,7 +191,7 @@ export function QuestionCard({
 
             {/* SINGLE-CHOICE RADIO CARDS */}
             {question.type === "single-choice" && question.options && (
-              <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1">
+              <div className="space-y-2 sm:space-y-2.5 max-h-[46vh] sm:max-h-[260px] overflow-y-auto overscroll-contain pr-1">
                 {question.options.map((option) => {
                   const isSelected = selectedAnswer === option.label;
 
@@ -201,10 +201,10 @@ export function QuestionCard({
                       whileTap={{ scale: 0.97 }}
                       whileHover={{ scale: 1.01 }}
                       onClick={() => onSelectSingleOption(option.label)}
-                      className={`w-full text-left p-3.5 rounded-2xl transition-all duration-200 flex items-start gap-3 border ${
+                      className={`w-full text-left p-3 sm:p-3.5 rounded-2xl transition-all duration-150 flex items-start gap-2.5 sm:gap-3 border ${
                         isSelected
                           ? "bg-gradient-to-r from-pink-50 to-rose-50 border-pink-500 shadow-md ring-2 ring-pink-500/20"
-                          : "bg-white/80 hover:bg-slate-50 border-slate-200/80"
+                          : "bg-white/85 hover:bg-slate-50 border-slate-200/80"
                       }`}
                     >
                       {/* Radio Circle Icon */}
@@ -228,10 +228,10 @@ export function QuestionCard({
 
                       {/* Label & Description */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">{option.emoji}</span>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                          <span className="text-base leading-none">{option.emoji}</span>
                           <span
-                            className={`font-semibold text-sm ${
+                            className={`font-semibold text-xs sm:text-sm ${
                               isSelected ? "text-pink-950 font-bold" : "text-slate-700"
                             }`}
                           >
@@ -239,7 +239,7 @@ export function QuestionCard({
                           </span>
                         </div>
                         {option.description && (
-                          <p className="text-xs text-slate-500 mt-0.5 leading-tight">
+                          <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-tight">
                             {option.description}
                           </p>
                         )}
@@ -252,20 +252,20 @@ export function QuestionCard({
 
             {/* SHORT TEXT INPUT */}
             {question.type === "short-text" && (
-              <div className="space-y-2 py-2">
+              <div className="space-y-2 py-1.5 sm:py-2">
                 <div className="relative">
                   <input
                     type="text"
                     value={selectedAnswer}
                     onChange={(e) => onTextChange(e.target.value)}
                     placeholder={question.placeholder}
-                    className="w-full px-4 py-3.5 text-sm bg-white/90 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 shadow-inner font-medium"
+                    className="w-full px-3.5 py-3 text-sm bg-white/95 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 shadow-inner font-medium"
                   />
-                  <div className="absolute right-3 top-3.5 text-[11px] font-mono text-slate-400">
+                  <div className="absolute right-3 top-3.5 text-[10px] sm:text-[11px] font-mono text-slate-400">
                     {selectedAnswer.length} chars
                   </div>
                 </div>
-                <p className="text-[11px] text-slate-400 font-mono">
+                <p className="text-[10px] sm:text-[11px] text-slate-400 font-mono">
                   💡 Type your response in one line and tap Next!
                 </p>
               </div>
@@ -280,9 +280,9 @@ export function QuestionCard({
                     value={selectedAnswer}
                     onChange={(e) => onTextChange(e.target.value)}
                     placeholder={question.placeholder}
-                    className="w-full p-4 text-sm bg-white/90 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 resize-none shadow-inner"
+                    className="w-full p-3.5 text-sm bg-white/95 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-slate-800 placeholder:text-slate-400 resize-none shadow-inner"
                   />
-                  <div className="absolute bottom-3 right-3 text-[11px] font-mono text-slate-400">
+                  <div className="absolute bottom-3 right-3 text-[10px] sm:text-[11px] font-mono text-slate-400">
                     {selectedAnswer.length} chars
                   </div>
                 </div>
@@ -292,12 +292,12 @@ export function QuestionCard({
         </div>
 
         {/* Card Footer Controls */}
-        <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3 mt-4">
+        <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-2.5 mt-3">
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={onBack}
             disabled={currentIndex === 0}
-            className={`px-4 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-1.5 transition-all border ${
+            className={`px-3.5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-1 transition-all border ${
               currentIndex === 0
                 ? "opacity-0 pointer-events-none"
                 : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
@@ -312,7 +312,7 @@ export function QuestionCard({
               whileTap={{ scale: 0.95 }}
               onClick={onSubmit}
               disabled={!isAnswered || isSubmitting}
-              className={`flex-1 py-3 px-5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-lg transition-all ${
+              className={`flex-1 py-3 px-4 sm:px-5 rounded-xl font-bold text-xs sm:text-sm text-white flex items-center justify-center gap-1.5 shadow-lg transition-all ${
                 isAnswered && !isSubmitting
                   ? "bg-gradient-to-r from-rose-500 via-pink-500 to-indigo-600 hover:opacity-95 shadow-pink-200 animate-pulse"
                   : "bg-slate-300 cursor-not-allowed shadow-none"
@@ -335,7 +335,7 @@ export function QuestionCard({
               whileTap={{ scale: 0.95 }}
               onClick={onNext}
               disabled={!isAnswered}
-              className={`px-6 py-3 rounded-xl font-bold text-sm text-white flex items-center gap-2 shadow-md transition-all ${
+              className={`px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-sm text-white flex items-center gap-1.5 shadow-md transition-all ${
                 isAnswered
                   ? "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200"
                   : "bg-slate-300 cursor-not-allowed shadow-none"
