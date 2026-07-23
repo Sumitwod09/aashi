@@ -5,6 +5,7 @@ import { AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { QuestionCard } from "@/components/QuestionCard";
 import { CelebrationScreen } from "@/components/CelebrationScreen";
+import { MusicPlayer } from "@/components/MusicPlayer";
 import { QUESTIONS } from "@/data/questions";
 
 // Web Audio API Sound Synthesizer
@@ -269,6 +270,9 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Background Music Player */}
+      <MusicPlayer soundEnabled={soundEnabled} />
 
       {/* Footer */}
       <footer className="w-full text-center py-3 text-xs text-slate-400 font-mono">
