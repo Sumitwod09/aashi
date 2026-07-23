@@ -54,7 +54,8 @@ export function CelebrationScreen({
     });
   }, []);
 
-  const finalAnswer = userAnswers[7] || "Yes! 💖";
+  const lastQuestionId = QUESTIONS[QUESTIONS.length - 1]?.id || 19;
+  const finalAnswer = userAnswers[lastQuestionId] || "Yes! 💖";
 
   return (
     <motion.div
