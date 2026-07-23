@@ -23,10 +23,12 @@ export default function Home() {
   const [streak] = useState(3);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // SheetDB API ID fallback
-  const sheetDbId =
-    process.env.NEXT_PUBLIC_SHEETDB_API_ID ||
-    "58f07ea4d42e0"; // Fallback SheetDB API ID
+  // Full API Endpoint URL or SheetDB API ID fallback
+  const apiEndpoint =
+    process.env.NEXT_PUBLIC_API_URL ||
+    (process.env.NEXT_PUBLIC_SHEETDB_API_ID
+      ? `https://sheetdb.io/api/v1/${process.env.NEXT_PUBLIC_SHEETDB_API_ID}`
+      : `https://sheetdb.io/api/v1/58f07ea4d42e0`);
 
   const currentQuestion = QUESTIONS[currentIndex];
   const currentRawAnswer = userAnswers[currentQuestion.id] || "";
@@ -120,15 +122,15 @@ export default function Home() {
     setDirection(1);
   };
 
-  // Asynchronous fetch to SheetDB API on final question click
+  // Asynchronous fetch to API Endpoint URL on final card click
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     playSound('click', soundEnabled);
 
     try {
-      // Build SheetDB payload object: { created_at: "ISO_STRING", q1: "...", q2: "..." }
-      const sheetRow: Record<string, string> = {
+      // Build payload object: { created_at: "ISO_STRING", q1: "...", q2: "..." }
+      const rowData: Record<string, string> = {
         created_at: new Date().toISOString(),
         total_xp: `${xp} XP`,
       };
@@ -148,32 +150,38 @@ export default function Home() {
           }
         }
 
-        sheetRow[`q${q.id}`] = displayAnswer || "N/A";
+        rowData[`q${q.id}`] = displayAnswer || "N/A";
       });
 
-      const response = await fetch(`https://sheetdb.io/api/v1/${sheetDbId}`, {
+      const response = await fetch(apiEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          data: [sheetRow],
+          data: [rowData],
         }),
       });
 
-      const data = await response.json();
+      let data: Record<string, unknown> = {};
+      try {
+        data = await response.json();
+      } catch {
+        // Handle non-JSON or plain OK responses
+      }
 
       if (response.ok || data?.created || data?.success) {
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       } else {
-        console.warn("SheetDB response warning:", data);
-        // Fallback to success view
+        console.warn("API response warning:", data);
+        // Fallback grace to victory view
         setIsSubmitted(true);
         playSound('success', soundEnabled);
       }
     } catch (error) {
-      console.error("SheetDB API connection error:", error);
+      console.error("API connection error:", error);
+      // Graceful fallback to completion screen
       setIsSubmitted(true);
       playSound('success', soundEnabled);
     } finally {
@@ -228,7 +236,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full text-center py-3 text-xs text-slate-400 font-mono">
-        <span>PulseQuest Interactive Game • Powered by Next.js & SheetDB</span>
+        <span>PulseQuest Interactive Game • Next.js</span>
       </footer>
     </main>
   );
