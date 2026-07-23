@@ -123,7 +123,7 @@ export default function Home() {
     setDirection(1);
   };
 
-  // Asynchronous fetch to Stein HQ / SheetDB API Endpoint URL on final card click
+  // Asynchronous fetch to Stein HQ / SheetDB / Google Sheet API Endpoint URL on final card click
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -151,10 +151,13 @@ export default function Home() {
           }
         }
 
-        rowData[`q${q.id}`] = displayAnswer || "N/A";
+        // Add both q1 key and title key for universal header matching
+        const cleanAnswer = displayAnswer || "N/A";
+        rowData[`q${q.id}`] = cleanAnswer;
+        rowData[q.title] = cleanAnswer;
       });
 
-      // Stein HQ format expects array `[ rowData ]`, while SheetDB accepts `{ data: [ rowData ] }`
+      // Stein HQ format expects array `[ rowData ]`, while SheetDB accepts `{ data: [ rowData ] }` or `[ rowData ]`
       const isSteinHq = apiEndpoint.includes("steinhq.com");
       const requestBody = isSteinHq ? JSON.stringify([rowData]) : JSON.stringify({ data: [rowData] });
 
