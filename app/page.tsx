@@ -1,3 +1,5 @@
+// REMINDER: Add NEXT_PUBLIC_GOOGLE_SCRIPT_URL=https://script.google.com/macros/s/.../exec inside your .env.local file
+
 "use client";
 
 import { useState } from "react";
@@ -23,13 +25,12 @@ export default function Home() {
   const [streak] = useState(3);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Stein HQ API Endpoint URL or SheetDB fallback
-  const apiEndpoint =
+  // Google Apps Script / Stein HQ / SheetDB Endpoint URL
+  const scriptUrl =
+    process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL ||
     process.env.NEXT_PUBLIC_STEINHQ_API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
-    (process.env.NEXT_PUBLIC_SHEETDB_API_ID
-      ? `https://sheetdb.io/api/v1/${process.env.NEXT_PUBLIC_SHEETDB_API_ID}`
-      : `https://sheetdb.io/api/v1/58f07ea4d42e0`);
+    "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
 
   const currentQuestion = QUESTIONS[currentIndex];
   const currentRawAnswer = userAnswers[currentQuestion.id] || "";
@@ -123,21 +124,20 @@ export default function Home() {
     setDirection(1);
   };
 
-  // Asynchronous fetch to Stein HQ / SheetDB / Google Sheet API Endpoint URL on final card click
-  const handleSubmit = async () => {
+  // Asynchronous final submission logic for Google Apps Script / Google Sheets
+  const handleFinalSubmit = async (answers: Record<number, string>) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    playSound('click', soundEnabled);
 
     try {
-      // Build row object: { created_at: "ISO_STRING", total_xp: "...", q1: "...", q2: "..." }
-      const rowData: Record<string, string> = {
+      // Build payload mapping q1, q2, ..., q27
+      const payload: Record<string, string> = {
         created_at: new Date().toISOString(),
         total_xp: `${xp} XP`,
       };
 
       QUESTIONS.forEach((q) => {
-        const raw = userAnswers[q.id] || "";
+        const raw = answers[q.id] || "";
         let displayAnswer = raw;
 
         if (q.type === "multi-choice") {
@@ -151,43 +151,40 @@ export default function Home() {
           }
         }
 
-        // Add both q1 key and title key for universal header matching
         const cleanAnswer = displayAnswer || "N/A";
-        rowData[`q${q.id}`] = cleanAnswer;
-        rowData[q.title] = cleanAnswer;
+        payload[`q${q.id}`] = cleanAnswer;
+        payload[q.title] = cleanAnswer;
       });
 
-      // Stein HQ format expects array `[ rowData ]`, while SheetDB accepts `{ data: [ rowData ] }` or `[ rowData ]`
-      const isSteinHq = apiEndpoint.includes("steinhq.com");
-      const requestBody = isSteinHq ? JSON.stringify([rowData]) : JSON.stringify({ data: [rowData] });
+      // MUST use Content-Type: "text/plain;charset=utf-8" to prevent CORS preflight issues with Google Apps Script
+      const isSteinHq = scriptUrl.includes("steinhq.com");
+      const requestBody = isSteinHq ? JSON.stringify([payload]) : JSON.stringify(payload);
 
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch(scriptUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain;charset=utf-8",
         },
         body: requestBody,
       });
 
-      let data: Record<string, unknown> = {};
+      let responseData: Record<string, unknown> = {};
       try {
-        data = await response.json();
+        responseData = await response.json();
       } catch {
-        // Handle plain OK responses
+        // Plain text / redirect OK response from Apps Script
       }
 
-      if (response.ok || data?.created || data?.success || data?.totalUpdatedRows) {
+      if (response.ok || responseData?.status === "success" || responseData?.result === "success" || responseData?.created) {
         setIsSubmitted(true);
-        playSound('success', soundEnabled);
       } else {
-        console.warn("API response warning:", data);
+        console.warn("Submission response notice:", responseData);
         setIsSubmitted(true);
-        playSound('success', soundEnabled);
       }
     } catch (error) {
-      console.error("API connection error:", error);
+      console.error("Google Script submission error:", error);
+      // Fallback grace to celebration screen so user experience is smooth
       setIsSubmitted(true);
-      playSound('success', soundEnabled);
     } finally {
       setIsSubmitting(false);
     }
@@ -219,7 +216,7 @@ export default function Home() {
               onTextChange={handleTextChange}
               onNext={handleNext}
               onBack={handleBack}
-              onSubmit={handleSubmit}
+              onSubmit={() => handleFinalSubmit(userAnswers)}
               direction={direction}
               isLastQuestion={currentIndex === QUESTIONS.length - 1}
               isSubmitting={isSubmitting}
@@ -240,7 +237,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="w-full text-center py-3 text-xs text-slate-400 font-mono">
-        <span>PulseQuest Interactive Game • Next.js & Stein HQ</span>
+        <span>PulseQuest Interactive Game • Next.js</span>
       </footer>
     </main>
   );
