@@ -19,7 +19,7 @@ export function CelebrationScreen({
 }: CelebrationScreenProps) {
   useEffect(() => {
     // Fire confetti bursts on trigger
-    const count = 200;
+    const count = 250;
     const defaults = {
       origin: { y: 0.7 }
     };
@@ -33,26 +33,28 @@ export function CelebrationScreen({
     }
 
     fire(0.25, {
-      spread: 26,
-      startVelocity: 55,
-      colors: ['#6366f1', '#ec4899', '#f97316']
+      spread: 30,
+      startVelocity: 60,
+      colors: ['#6366f1', '#ec4899', '#f97316', '#f43f5e']
     });
     fire(0.2, {
-      spread: 60,
+      spread: 70,
       colors: ['#a855f7', '#3b82f6', '#10b981']
     });
     fire(0.35, {
-      spread: 100,
+      spread: 110,
       decay: 0.91,
-      scalar: 0.8
+      scalar: 0.9
     });
     fire(0.1, {
-      spread: 120,
-      startVelocity: 25,
+      spread: 140,
+      startVelocity: 30,
       decay: 0.92,
-      colors: ['#fbbf24', '#f43f5e']
+      colors: ['#fbbf24', '#f43f5e', '#ec4899']
     });
   }, []);
+
+  const finalAnswer = userAnswers[7] || "Yes! 💖";
 
   return (
     <motion.div
@@ -61,23 +63,23 @@ export function CelebrationScreen({
       transition={{ duration: 0.5, type: "spring" }}
       className="relative z-20 w-full max-w-md mx-auto my-auto px-4 py-2"
     >
-      <div className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/90 text-center space-y-6">
-        {/* Animated Trophy Icon & Glow */}
+      <div className="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl border border-pink-200 text-center space-y-6 bg-gradient-to-b from-white/95 via-pink-50/30 to-white/95">
+        {/* Animated Heart/Trophy Icon & Glow */}
         <div className="relative inline-block">
-          <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-amber-400 via-pink-500 to-indigo-500 opacity-40 blur-lg animate-pulse" />
+          <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-pink-400 via-rose-500 to-indigo-500 opacity-40 blur-lg animate-pulse" />
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
-            className="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-400 to-amber-200 flex items-center justify-center text-amber-900 shadow-xl border-2 border-white mx-auto"
+            className="relative w-20 h-20 rounded-3xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white shadow-xl border-2 border-white mx-auto"
           >
-            <Trophy className="w-10 h-10 stroke-[2.5]" />
+            <Heart className="w-10 h-10 fill-white stroke-[2]" />
           </motion.div>
         </div>
 
         {/* Header Text */}
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs border border-emerald-200">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 font-bold text-xs border border-pink-200">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>Submission Received!</span>
           </div>
@@ -89,8 +91,18 @@ export function CelebrationScreen({
           </p>
         </div>
 
+        {/* Final "Do you like me?" Result Banner */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-indigo-600 text-white shadow-lg space-y-1">
+          <div className="text-[11px] font-mono uppercase tracking-wider text-pink-100">
+            Final Question Answered 💌
+          </div>
+          <div className="text-lg font-bold">
+            "Do you like me?" → <span className="underline decoration-wavy underline-offset-4">{finalAnswer}</span>
+          </div>
+        </div>
+
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-2 gap-3">
           <div className="p-3.5 rounded-2xl bg-indigo-50/80 border border-indigo-100 flex flex-col items-center justify-center">
             <div className="flex items-center gap-1 text-indigo-600 font-bold text-lg">
               <Zap className="w-4 h-4 fill-amber-400 text-amber-400" />
@@ -109,7 +121,7 @@ export function CelebrationScreen({
         </div>
 
         {/* Answer Summary Card */}
-        <div className="text-left space-y-3 pt-2">
+        <div className="text-left space-y-3 pt-1">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-400 uppercase">
             <span>Response Summary</span>
             <span className="flex items-center gap-1 text-indigo-600">
@@ -119,24 +131,40 @@ export function CelebrationScreen({
           </div>
 
           <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
-            {QUESTIONS.map((q) => (
-              <div
-                key={q.id}
-                className="p-3 rounded-xl bg-white/70 border border-slate-100 text-xs space-y-1"
-              >
-                <div className="font-semibold text-slate-700 flex items-center justify-between">
-                  <span className="truncate">{q.subtitle}: {q.title}</span>
+            {QUESTIONS.map((q) => {
+              const rawAnswer = userAnswers[q.id] || "";
+              let formattedAnswer = rawAnswer;
+
+              if (q.type === "multi-choice") {
+                try {
+                  const arr = JSON.parse(rawAnswer);
+                  if (Array.isArray(arr)) {
+                    formattedAnswer = arr.join(", ");
+                  }
+                } catch {
+                  formattedAnswer = rawAnswer;
+                }
+              }
+
+              return (
+                <div
+                  key={q.id}
+                  className="p-3 rounded-xl bg-white/80 border border-slate-100 text-xs space-y-1"
+                >
+                  <div className="font-semibold text-slate-700 flex items-center justify-between">
+                    <span className="truncate">{q.subtitle}: {q.title}</span>
+                  </div>
+                  <p className="text-indigo-600 font-medium bg-indigo-50/70 px-2.5 py-1 rounded-lg border border-indigo-100/60 break-words">
+                    {formattedAnswer || "No response"}
+                  </p>
                 </div>
-                <p className="text-indigo-600 font-medium bg-indigo-50/60 px-2 py-1 rounded-lg border border-indigo-100/50 break-words">
-                  "{userAnswers[q.id] || "No response"}"
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Action Button */}
-        <div className="pt-2">
+        <div className="pt-1">
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={onReset}

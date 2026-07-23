@@ -5,7 +5,7 @@ export interface QuestionOption {
   description?: string;
 }
 
-export type QuestionType = 'single-choice' | 'text-input';
+export type QuestionType = 'multi-choice' | 'single-choice' | 'short-text' | 'long-text';
 
 export interface Question {
   id: number;
@@ -23,195 +23,176 @@ export const QUESTIONS: Question[] = [
   {
     id: 1,
     subtitle: "Q.01",
-    title: "What's your ideal weekend vibe?",
-    type: "single-choice",
-    instructions: "SELECT ONLY 1",
+    title: "What are your favorite weekend vibes?",
+    type: "multi-choice",
+    instructions: "SELECT ALL THAT APPLY 🔲",
     xpPoints: 50,
-    badge: "Vibe Master",
+    badge: "Vibe Explorer",
     options: [
       {
         id: "opt-1a",
-        label: "Outdoor Adventure & Trail Trekking",
+        label: "Outdoor Adventures & Hiking",
         emoji: "🌿",
-        description: "Fresh mountain air, hiking trails, and sunshine."
+        description: "Fresh mountain air, scenic views, and trail walks."
       },
       {
         id: "opt-1b",
-        label: "Cozy Movie Marathon & Blanket Nest",
+        label: "Cozy Movie Marathon & Snacks",
         emoji: "🍿",
-        description: "Binge-watching sci-fi, popcorn, and absolute chill."
+        description: "Blanket nest, popcorn, and binge-watching favorite shows."
       },
       {
         id: "opt-1c",
-        label: "Cafe Hopping, Reading & Vinyl",
+        label: "Cafe Hopping & Good Coffee",
         emoji: "☕",
-        description: "A warm matcha latte, good books, and lofi beats."
+        description: "A warm matcha or cappuccino with lofi tunes."
       },
       {
         id: "opt-1d",
-        label: "Night Out, Live Music & Dancing",
+        label: "Night Out & Live Music",
         emoji: "⚡",
-        description: "Electric energy, lights, and late night eats."
+        description: "Electric energy, dancing, and late-night city walks."
       }
     ]
   },
   {
     id: 2,
     subtitle: "Q.02",
-    title: "Pick your ultimate midnight comfort food 🍕",
-    type: "single-choice",
-    instructions: "SELECT ONLY 1",
+    title: "Which midnight snacks are you saying YES to? 🍕",
+    type: "multi-choice",
+    instructions: "SELECT ALL THAT APPLY 🔲",
     xpPoints: 50,
-    badge: "Foodie Guru",
+    badge: "Foodie Champion",
     options: [
       {
         id: "opt-2a",
-        label: "Steaming Hot Tonkotsu Ramen",
+        label: "Steaming Hot Ramen",
         emoji: "🍜",
-        description: "Rich broth, soft boiled egg, and savory pork slices."
+        description: "Rich savory broth with soft boiled egg."
       },
       {
         id: "opt-2b",
-        label: "Loaded Street Tacos & Guacamole",
+        label: "Loaded Tacos & Guac",
         emoji: "🌮",
-        description: "Double tortilla, extra cilantro, and spicy salsa verde."
+        description: "Extra salsa, double tortilla, and lime."
       },
       {
         id: "opt-2c",
-        label: "Wood-fired Artisanal Pepperoni Pizza",
+        label: "Wood-Fired Pizza",
         emoji: "🍕",
-        description: "Crispy crust, melted mozzarella, and fresh basil."
+        description: "Melted cheese, crispy crust, and fresh basil."
       },
       {
         id: "opt-2d",
-        label: "Fresh Salmon Nigiri & Spicy Tuna Roll",
+        label: "Fresh Sushi Rolls",
         emoji: "🍱",
-        description: "Wasabi splash, pickled ginger, and soy dip."
+        description: "Spicy tuna, salmon nigiri, and soy dip."
+      },
+      {
+        id: "opt-2e",
+        label: "Warm Brownies & Ice Cream",
+        emoji: "🍨",
+        description: "Gooey chocolate fudge topped with vanilla."
       }
     ]
   },
   {
     id: 3,
     subtitle: "Q.03",
-    title: "What is your #1 Green Flag in a friend or partner? 💚",
-    type: "text-input",
-    instructions: "TYPE YOUR RESPONSE BELOW",
-    placeholder: "e.g. Active listening, remembers tiny details, or sends funny memes...",
-    xpPoints: 75,
-    badge: "Heart of Gold"
+    title: "What's your go-to comfort song or artist right now? 🎵",
+    type: "short-text",
+    instructions: "ONE LINE ANSWER ✍️",
+    placeholder: "e.g. Taylor Swift, Lofi Beats, Coldplay, Frank Ocean...",
+    xpPoints: 60,
+    badge: "Music Connoisseur"
   },
   {
     id: 4,
     subtitle: "Q.04",
-    title: "How do you prefer to recharge your battery?",
-    type: "single-choice",
-    instructions: "SELECT ONLY 1",
+    title: "How do you like to recharge your battery?",
+    type: "multi-choice",
+    instructions: "SELECT ALL THAT APPLY 🔲",
     xpPoints: 50,
     badge: "Zen Master",
     options: [
       {
         id: "opt-4a",
-        label: "Solo Quiet Time & Noise Cancelling HQ",
+        label: "Solo Quiet Time & Headphones",
         emoji: "🎧",
-        description: "Zero notifications, total solitude, inner peace."
+        description: "Zero noise, total solitude, and peace."
       },
       {
         id: "opt-4b",
         label: "Deep Talks with Best Friends",
         emoji: "👯",
-        description: "Heart-to-heart convos, laughs, and mutual support."
+        description: "Heart-to-heart convos and non-stop giggles."
       },
       {
         id: "opt-4c",
-        label: "Sweat Session, Gym or Cycling",
+        label: "Sweat Session & Workouts",
         emoji: "🚴",
-        description: "Endorphins pumping, intense workout, pure focus."
+        description: "Endorphins pumping, gym, or sunset cycling."
       },
       {
         id: "opt-4d",
-        label: "Rabbit-hole Learning & New Hobbies",
+        label: "Learning Fun Hobbies",
         emoji: "🧠",
-        description: "Diving into new tech, tutorials, or Wikipedia deep dives."
+        description: "Diving into new DIY, baking, or tech rabbit holes."
       }
     ]
   },
   {
     id: 5,
     subtitle: "Q.05",
-    title: "Which super skill would you choose for 24 hours?",
-    type: "single-choice",
-    instructions: "SELECT ONLY 1",
-    xpPoints: 50,
-    badge: "Superhero",
-    options: [
-      {
-        id: "opt-5a",
-        label: "Instant Teleportation Anywhere",
-        emoji: "🚀",
-        description: "Skip commuting forever. Breakfast in Tokyo, dinner in Rome."
-      },
-      {
-        id: "opt-5b",
-        label: "Time Travel (Past & Future)",
-        emoji: "⏳",
-        description: "Peek into 2126 or experience historical milestones."
-      },
-      {
-        id: "opt-5c",
-        label: "Fluent in Every Human & Animal Language",
-        emoji: "🔮",
-        description: "Understand your cat's exact thoughts and all world dialects."
-      },
-      {
-        id: "opt-5d",
-        label: "Master of Every Musical Instrument",
-        emoji: "🎸",
-        description: "Compose symphonies and shred guitar solos effortlessly."
-      }
-    ]
+    title: "What is your #1 Green Flag in a person? 💚",
+    type: "short-text",
+    instructions: "ONE LINE ANSWER ✍️",
+    placeholder: "e.g. Active listener, remembers little details, makes me laugh...",
+    xpPoints: 75,
+    badge: "Pure Heart"
   },
   {
     id: 6,
     subtitle: "Q.06",
-    title: "If you could instantly master any skill today, what would it be?",
-    type: "text-input",
-    instructions: "TYPE YOUR RESPONSE BELOW",
-    placeholder: "e.g. Building AI agents, playing piano, mastering 3D animation...",
+    title: "What's one dream trip destination on your bucket list? ✈️",
+    type: "short-text",
+    instructions: "ONE LINE ANSWER ✍️",
+    placeholder: "e.g. Kyoto during cherry blossom, Santorini sunsets, Swiss Alps...",
     xpPoints: 75,
-    badge: "Visionary"
+    badge: "Wanderlust"
   },
   {
     id: 7,
     subtitle: "Q.07",
-    title: "What's your current energy rating for this week?",
+    title: "Do you like me? 💖",
     type: "single-choice",
-    instructions: "SELECT ONLY 1",
-    xpPoints: 50,
-    badge: "Energy Champion",
+    instructions: "THE FINAL QUESTION 💌",
+    xpPoints: 100,
+    badge: "Heart Locked",
     options: [
       {
         id: "opt-7a",
-        label: "100% Fully Charged & Unstoppable",
-        emoji: "⚡",
-        description: "Crushing goals, maximum focus, hype mood."
+        label: "Yes, absolutely! 🥰",
+        emoji: "💖",
+        description: "No doubt about it!"
       },
       {
         id: "opt-7b",
-        label: "75% Cruising Smoothly",
-        emoji: "🔋",
-        description: "Solid steady pace, healthy balance."
+        label: "Yes, 1000% without a doubt! ✨",
+        emoji: "🌟",
+        description: "You're amazing!"
       },
       {
         id: "opt-7c",
-        label: "25% Powered by Espresso & Hope",
-        emoji: "🪫",
-        description: "Countdown to the weekend is officially active."
+        label: "More than words can say! 💌",
+        emoji: "🌹",
+        description: "Best person ever!"
       },
       {
         id: "opt-7d",
-        label: "0% Hibernation Mode Requested",
-        emoji: "💤",
-        description: "Do not disturb. Sleeping for 48 hours straight."
+        label: "Yes! (There is no NO option 😉) 💖",
+        emoji: "👑",
+        description: "Checked and confirmed!"
       }
     ]
   }
