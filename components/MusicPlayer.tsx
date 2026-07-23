@@ -7,102 +7,81 @@ interface MusicPlayerProps {
 }
 
 export function MusicPlayer({ soundEnabled }: MusicPlayerProps) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  // Shawn Mendes - "When You're Ready" audio stream
-  const audioSrc = "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-acoustic-guitar-love-song-112191.mp3";
-
-  // Mute / Unmute & Play Control
+  // Send command to single YouTube Player for Shawn Mendes - "When You're Ready" (nwCqA7hBTuE)
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.muted = !soundEnabled;
-      if (soundEnabled && audioRef.current.paused) {
-        audioRef.current.play().catch(() => {});
-      }
-    }
+    if (!iframeRef.current || !iframeRef.current.contentWindow) return;
 
-    // Backup YouTube Player control via postMessage
-    if (iframeRef.current && iframeRef.current.contentWindow) {
-      try {
-        const funcName = soundEnabled ? "unMute" : "mute";
-        iframeRef.current.contentWindow.postMessage(
-          JSON.stringify({ event: "command", func: funcName, args: [] }),
-          "*"
-        );
-        const playFunc = soundEnabled ? "playVideo" : "pauseVideo";
-        iframeRef.current.contentWindow.postMessage(
-          JSON.stringify({ event: "command", func: playFunc, args: [] }),
-          "*"
-        );
-      } catch (e) {
-        // ignore
-      }
+    try {
+      const funcName = soundEnabled ? "playVideo" : "pauseVideo";
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func: funcName, args: [] }),
+        "*"
+      );
+
+      const muteFunc = soundEnabled ? "unMute" : "mute";
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func: muteFunc, args: [] }),
+        "*"
+      );
+    } catch (e) {
+      console.warn("YouTube player command error:", e);
     }
   }, [soundEnabled]);
 
-  // Start playback automatically on mount or first user interaction (bypasses browser autoplay block)
+  // Start playback automatically on mount or first screen interaction
   useEffect(() => {
-    const playAudio = () => {
-      if (audioRef.current) {
-        audioRef.current.muted = !soundEnabled;
-        audioRef.current.play().catch(() => {});
-      }
+    const startPlayback = () => {
       if (iframeRef.current && iframeRef.current.contentWindow) {
         try {
-          iframeRef.current.contentWindow.postMessage(
-            JSON.stringify({ event: "command", func: "playVideo", args: [] }),
-            "*"
-          );
+          if (soundEnabled) {
+            iframeRef.current.contentWindow.postMessage(
+              JSON.stringify({ event: "command", func: "unMute", args: [] }),
+              "*"
+            );
+            iframeRef.current.contentWindow.postMessage(
+              JSON.stringify({ event: "command", func: "playVideo", args: [] }),
+              "*"
+            );
+          }
         } catch (e) {}
       }
     };
 
-    // Attempt direct play on load
-    playAudio();
+    // Initial load attempt
+    startPlayback();
 
-    // Trigger play on first tap/click/touch anywhere on page
-    const handleFirstUserInteraction = () => {
-      playAudio();
-      window.removeEventListener("click", handleFirstUserInteraction);
-      window.removeEventListener("touchstart", handleFirstUserInteraction);
-      window.removeEventListener("keydown", handleFirstUserInteraction);
+    // First user touch/click listener to bypass browser autoplay restrictions
+    const handleUserInteraction = () => {
+      startPlayback();
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
     };
 
-    window.addEventListener("click", handleFirstUserInteraction, { once: true });
-    window.addEventListener("touchstart", handleFirstUserInteraction, { once: true });
-    window.addEventListener("keydown", handleFirstUserInteraction, { once: true });
+    window.addEventListener("click", handleUserInteraction, { once: true });
+    window.addEventListener("touchstart", handleUserInteraction, { once: true });
+    window.addEventListener("keydown", handleUserInteraction, { once: true });
 
     return () => {
-      window.removeEventListener("click", handleFirstUserInteraction);
-      window.removeEventListener("touchstart", handleFirstUserInteraction);
-      window.removeEventListener("keydown", handleFirstUserInteraction);
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
     };
   }, [soundEnabled]);
 
   return (
-    <>
-      {/* HTML5 Audio Player for seamless background playback */}
-      <audio
-        ref={audioRef}
-        src={audioSrc}
-        loop
-        autoPlay
-        playsInline
-        className="hidden"
+    <div className="hidden" aria-hidden="true">
+      {/* ONLY ONE Single Audio Source: Shawn Mendes - When You're Ready (nwCqA7hBTuE) */}
+      <iframe
+        ref={iframeRef}
+        width="1"
+        height="1"
+        src="https://www.youtube-nocookie.com/embed/nwCqA7hBTuE?enablejsapi=1&autoplay=1&loop=1&playlist=nwCqA7hBTuE&controls=0&origin=http://localhost:3000"
+        title="Shawn Mendes - When You're Ready"
+        allow="autoplay"
       />
-
-      {/* Hidden YouTube Player for Shawn Mendes - When You're Ready (nwCqA7hBTuE) */}
-      <div className="hidden" aria-hidden="true">
-        <iframe
-          ref={iframeRef}
-          width="1"
-          height="1"
-          src="https://www.youtube-nocookie.com/embed/nwCqA7hBTuE?enablejsapi=1&autoplay=1&loop=1&playlist=nwCqA7hBTuE&controls=0"
-          title="Shawn Mendes - When You're Ready"
-          allow="autoplay"
-        />
-      </div>
-    </>
+    </div>
   );
 }
